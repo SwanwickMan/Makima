@@ -5,7 +5,12 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageIcon>eyecon.png</PackageIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="COMMANDS.txt" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Speech" Version="8.0.0" />

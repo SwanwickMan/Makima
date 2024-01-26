@@ -1,17 +1,57 @@
 ﻿using System;
 using System.Speech.Recognition;
 using System.IO;
+using System.Diagnostics;
 
 namespace Makima
 {
     class Makima 
     {
-        public Dictionary<string, string> commands;
+        private Dictionary<string, string> commands;
+        private SpeechRecognitionEngine recognizer;
+        private Boolean debug = false;
+
+        private void runCommand(String voiceCommand)
+        {
+            if (voiceCommand is null) { return; }
+            String command = commands.GetValueOrDefault(voiceCommand, null);
+            Console.WriteLine(command);
+            if (command is not null) 
+            { 
+                //Execute command
+                Process cmd = new Process();
+                cmd.StartInfo.FileName = "cmd.exe";
+                cmd.StartInfo.Arguments = $"/c {command}";
+                cmd.StartInfo.CreateNoWindow = true;
+                cmd.StartInfo.RedirectStandardOutput = true;
+                cmd.Start();
+                string output = cmd.StandardOutput.ReadToEnd()!;
+                cmd.WaitForExit();
+            
+            }
+        }
+        private void debugOutput(SpeechRecognizedEventArgs e)
+        {
+            Console.WriteLine("Recognized text: " + e.Result.Text);
+            foreach (RecognizedPhrase phrase in e.Result.Alternates.ToList())
+            {
+                Console.WriteLine("      ({0}) {1}", phrase.Confidence, phrase.Text);
+            }
+        }
+
+        private void recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        {
+            if (debug) { debugOutput(e); }
+            runCommand(e.Result.Text);
+        }
 
         public Makima()
         {
+            Choices c = new Choices();
             commands = new Dictionary<string, string>();
-            using (StreamReader sr = new StreamReader("Commands.txt"))
+            String file = "Commands.txt";
+            if (!File.Exists(file)) { File.Create(file); }
+            using (StreamReader sr = new StreamReader(file))
             {
                 String[] content = sr.ReadToEnd().Split("\n");
                 foreach (String line in content)
@@ -21,7 +61,9 @@ namespace Makima
                         string[] entry = line.Split("|");
                         if (entry.Length == 2)
                         {
+                            Console.WriteLine("found: " + entry[0] + " -> " + entry[1]);
                             commands.Add(entry[0], entry[1]);
+                            c.Add(entry[0]);
                         }
                         else
                         {
@@ -31,55 +73,25 @@ namespace Makima
                 }
             }
 
-        }
+            var gb = new GrammarBuilder(c);
+            var commandsGrammar = new Grammar(gb);
 
+            recognizer = new SpeechRecognitionEngine(
+                new System.Globalization.CultureInfo("en-UK"));
+            recognizer.LoadGrammar(new DictationGrammar());
+            recognizer.LoadGrammar(commandsGrammar);
+            recognizer.MaxAlternates = 10;
+            recognizer.SpeechRecognized +=
+                  new EventHandler<SpeechRecognizedEventArgs>(recognizer_SpeechRecognized);
+            recognizer.SetInputToDefaultAudioDevice();
+            recognizer.RecognizeAsync(RecognizeMode.Multiple);
+        }
+        public void switchDebug() { debug = !debug; Console.WriteLine("debug: " + debug.ToString()); }
 
         static void Main(string[] args)
         {
-
-            Choices c = new Choices();
-            var gb = new GrammarBuilder(c);
-            var customGrammar = new Grammar(gb);
-
-            // Create an in-process speech recognizer for the en-US locale.  
-            using (
-            SpeechRecognitionEngine recognizer =
-              new SpeechRecognitionEngine(
-                new System.Globalization.CultureInfo("en-UK")))
-            {
-
-                // Create and load a dictation grammar.  
-                recognizer.LoadGrammar(new DictationGrammar());
-                recognizer.LoadGrammar(customGrammar);
-                recognizer.MaxAlternates = 10;
-
-                // Add a handler for the speech recognized event.  
-                recognizer.SpeechRecognized +=
-                  new EventHandler<SpeechRecognizedEventArgs>(recognizer_SpeechRecognized);
-
-                // Configure input to the speech recognizer.  
-                recognizer.SetInputToDefaultAudioDevice();
-
-                // Start asynchronous, continuous speech recognition.  
-                recognizer.RecognizeAsync(RecognizeMode.Multiple);
-
-                // Keep the console window open.  
-                while (true)
-                {
-                    Console.ReadLine();
-                }
-            }
-        }
-
-        // Handle the SpeechRecognized event.  
-        static void recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
-        {
-            Console.WriteLine("Recognized text: " + e.Result.Text);
-            var x = e.Result.Alternates.ToList();
-            foreach (RecognizedPhrase phrase in x)
-            {
-                Console.WriteLine("      ({0}) {1}", phrase.Confidence, phrase.Text);
-            }
+            Makima makima = new Makima();
+            while (true) { Console.ReadLine(); makima.switchDebug(); }
         }
     }
 }

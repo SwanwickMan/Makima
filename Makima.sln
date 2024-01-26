@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Makima", "Makima.csproj", "{8F6D15D2-BEE8-478B-9F01-DAABCB6BFE0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Makima", "Makima.csproj", "{8F6D15D2-BEE8-478B-9F01-DAABCB6BFE0B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BEADD084-7603-40B7-BFC8-9E537DD3FDF8}"
+	ProjectSection(SolutionItems) = preProject
+		D:\Andrew\Downloads\eyecon.png = D:\Andrew\Downloads\eyecon.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
