@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageIcon>eyecon.png</PackageIcon>
+    <NeutralLanguage>aa-ER</NeutralLanguage>
+    <ApplicationIcon>eyecon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,14 +15,26 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="eyecon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Speech" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="eyecon.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

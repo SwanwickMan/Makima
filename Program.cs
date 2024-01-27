@@ -9,6 +9,7 @@ namespace Makima
     {
         private Dictionary<string, string> commands;
         private SpeechRecognitionEngine recognizer;
+        private String exampleText = "//your commands go below\ncommand open|start chrome";
         private Boolean debug = false;
 
         private void runCommand(String voiceCommand)
@@ -50,7 +51,13 @@ namespace Makima
             Choices c = new Choices();
             commands = new Dictionary<string, string>();
             String file = "Commands.txt";
-            if (!File.Exists(file)) { File.Create(file); }
+
+            if (!File.Exists(file)) {
+                StreamWriter sw = File.CreateText(file);
+                sw.Write(exampleText);
+                sw.Close();
+                
+            }
             using (StreamReader sr = new StreamReader(file))
             {
                 String[] content = sr.ReadToEnd().Split("\n");

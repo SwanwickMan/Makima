@@ -1,0 +1,2 @@
+﻿//Example file
+spoken command|start chrome
