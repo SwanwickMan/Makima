@@ -9,13 +9,13 @@ namespace Makima
     {
         private Dictionary<string, string> commands;
         private SpeechRecognitionEngine recognizer;
-        private String exampleText = "//your commands go below\ncommand open|start chrome";
+        private string exampleText = "//your commands go below\ncommand open|start chrome";
         private Boolean debug = false;
 
-        private void runCommand(String voiceCommand)
+        private void runCommand(string voiceCommand)
         {
             if (voiceCommand is null) { return; }
-            String command = commands.GetValueOrDefault(voiceCommand, null);
+            string command = commands.GetValueOrDefault(voiceCommand, null);
             Console.WriteLine(command);
             if (command is not null) 
             { 
@@ -50,7 +50,7 @@ namespace Makima
         {
             Choices c = new Choices();
             commands = new Dictionary<string, string>();
-            String file = "Commands.txt";
+            string file = "Commands.txt";
 
             if (!File.Exists(file)) {
                 StreamWriter sw = File.CreateText(file);
@@ -60,8 +60,8 @@ namespace Makima
             }
             using (StreamReader sr = new StreamReader(file))
             {
-                String[] content = sr.ReadToEnd().Split("\n");
-                foreach (String line in content)
+                string[] content = sr.ReadToEnd().Split("\n");
+                foreach (string line in content)
                 {
                     if (!line.StartsWith("//"))
                     {
@@ -74,7 +74,7 @@ namespace Makima
                         }
                         else
                         {
-                            Console.WriteLine("bad form command: ",line);
+                            Console.WriteLine("bad form command: " + line);
                         }
                     }
                 }
